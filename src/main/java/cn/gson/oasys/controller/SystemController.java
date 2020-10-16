@@ -12,8 +12,6 @@ import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.services.SystemService;
 import cn.gson.oasys.services.user.UserLongRecordService;
 import com.alibaba.fastjson.JSONObject;
-import com.github.stuxuhai.jpinyin.PinyinFormat;
-import com.github.stuxuhai.jpinyin.PinyinHelper;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.UserAgent;
 import eu.bitwalker.useragentutils.Version;
@@ -222,8 +220,11 @@ public class SystemController {
                     //跳转页面
                     return "error/error";
                 }
+
+//                String sysid=user.getDept().getSysId();
+                String sysid=System.getenv("SYSID");
                 //系统有效性校验
-                JSONObject jsonObj = systemService.checkSysStatus(user.getDept().getSysId());
+                JSONObject jsonObj = systemService.checkSysStatus(sysid);
                 if(!jsonObj.getBoolean("success")){//禁止用户访问
                     modelMap.put("msg",jsonObj.getString("resultMessage"));//仅为示例
                     return "error/error";
@@ -235,7 +236,7 @@ public class SystemController {
                 }
                 //登录日志写入
                 try{
-                    systemService.writeLog(username,user.getDept().getSysId());
+                    systemService.writeLog(username,sysid);
                 }catch (Exception e){
                     e.printStackTrace();
                     logger.info("/loginCserver.jhtml-用户登录-添加日志异常："+e);

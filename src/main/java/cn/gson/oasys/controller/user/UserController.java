@@ -1,10 +1,19 @@
 package cn.gson.oasys.controller.user;
 
-import java.util.List;
-
+import cn.gson.oasys.model.dao.roledao.RoleDao;
+import cn.gson.oasys.model.dao.user.DeptDao;
+import cn.gson.oasys.model.dao.user.PositionDao;
+import cn.gson.oasys.model.dao.user.UserDao;
+import cn.gson.oasys.model.entity.role.Role;
+import cn.gson.oasys.model.entity.user.Dept;
+import cn.gson.oasys.model.entity.user.Position;
+import cn.gson.oasys.model.entity.user.User;
 import cn.gson.oasys.services.SystemService;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.ibatis.annotations.Param;
+import com.github.pagehelper.util.StringUtil;
+import com.github.stuxuhai.jpinyin.PinyinException;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,22 +29,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.pagehelper.util.StringUtil;
-import com.github.stuxuhai.jpinyin.PinyinException;
-import com.github.stuxuhai.jpinyin.PinyinFormat;
-import com.github.stuxuhai.jpinyin.PinyinHelper;
-
-import cn.gson.oasys.model.dao.roledao.RoleDao;
-import cn.gson.oasys.model.dao.user.DeptDao;
-import cn.gson.oasys.model.dao.user.PositionDao;
-import cn.gson.oasys.model.dao.user.UserDao;
-import cn.gson.oasys.model.entity.role.Role;
-import cn.gson.oasys.model.entity.user.Dept;
-import cn.gson.oasys.model.entity.user.Position;
-import cn.gson.oasys.model.entity.user.User;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("/")
@@ -165,8 +161,10 @@ public class UserController {
 			user.setPosition(position);
 			user.setFatherId(dept.getDeptmanager());
 
+
 			//调用平台接口注册
-			JSONObject result = systemService.registerUser(user,tuser.getDept().getSysId());
+			JSONObject result = systemService.registerUser(user,System.getenv("SYSID"));
+//			JSONObject result = systemService.registerUser(user,tuser.getDept().getSysId());
 			if(!result.getBoolean("success")){
 				model.addAttribute("success",0);
 				model.addAttribute("msg",result.getString("resultMessage"));//返回失败原因
